@@ -4,6 +4,79 @@
     <meta charset="UTF-8">
     <title>PAGE 1</title>
     <link rel="stylesheet" href="assets/style.css">
+    <style>
+        /* Optional telemetry style block to fit your green terminal theme */
+        .telemetry-panel {
+            background: #001400;
+            border: 1px solid #00ff55;
+            color: #00ff55;
+            padding: 15px;
+            font-family: monospace;
+            margin: 20px 0;
+            max-width: 400px;
+        }
+        .telemetry-panel p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header><h1>FILE: PAGE 1</h1></header>
+    <section>
+        <p>File retrieved successfully.</p>
+        
+        <div class="telemetry-panel">
+            <h3>[ TERMINAL TELEMETRY ]</h3>
+            <p>SYSTEM TIME: <span id="live-time">LOADING...</span></p>
+            <p>LATITUDE: <span id="geo-lat">--.----°</span></p>
+            <p>LONGITUDE: <span id="geo-lng">--.----°</span></p>
+            <p>ALTITUDE: <span id="geo-alt">---- m</span></p>
+            <p>HEADING: <span id="geo-hdg">---°</span></p>
+        </div>
+
+        <p><a href="index.html">> RETURN TO MAIN TERMINAL</a></p>
+    </section>
+
+    <script>
+        // 1. Live Date & Time Clock
+        function updateClock() {
+            const now = new Date();
+            // Formats to YYYY-MM-DD HH:MM:SS
+            const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('live-time').innerText = timestamp + " UTC";
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial run
+
+        // 2. Generate Random Geographic Data
+        function generateGeographicData() {
+            // Generates completely random coordinates anywhere globally
+            const lat = (Math.random() * 180 - 90).toFixed(4);
+            const lng = (Math.random() * 360 - 180).toFixed(4);
+            
+            // Random operational altitude (e.g., 150m to 12000m)
+            const alt = Math.floor(Math.random() * (12000 - 150) + 150);
+            
+            // Random heading (0 to 359 degrees)
+            const hdg = Math.floor(Math.random() * 360);
+
+            // Inject data into HTML elements
+            document.getElementById('geo-lat').innerText = (lat >= 0 ? lat + " N" : Math.abs(lat) + " S");
+            document.getElementById('geo-lng').innerText = (lng >= 0 ? lng + " E" : Math.abs(lng) + " W");
+            document.getElementById('geo-alt').innerText = alt + " m";
+            document.getElementById('geo-hdg').innerText = hdg + "°";
+        }
+
+        // Generate data immediately on load
+        generateGeographicData();
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PAGE 1</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <header><h1>FILE: PAGE 1</h1></header>
