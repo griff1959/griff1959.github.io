@@ -2,53 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Military Terminal Dashboard</title>
-    <style>
-        /* Optional basic styling to make it look clean */
-        body {
-            font-family: monospace;
-            background-color: #0d1117;
-            color: #58a6ff;
-            margin: 0;
-            padding: 20px;
-        }
-        #hero-img {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border: 2px solid #58a6ff;
-            border-radius: 6px;
-        }
-        nav {
-            margin: 20px 0;
-            font-size: 1.2rem;
-        }
-        nav a {
-            color: #58a6ff;
-            text-decoration: none;
-            padding: 0 10px;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        #gallery-container {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        .gallery-thumb {
-            width: 400px;
-            height: 300px;
-            object-fit: cover;
-            border: 2px solid #30363d;
-            border-radius: 6px;
-        }
-    </style>
+    <title>MIL-COM TERMINAL</title>
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script>
+        fetch("assets/egg.txt").then(()=>{}).catch(()=>{});
+    </script>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
+
 <body>
- <header>
+    <header>
         <h1>MIL-COM OPERATIONS TERMINAL</h1>
         <div>AUTH LEVEL: <strong>GREEN</strong></div>
         <div class="cursor"></div>
@@ -103,64 +68,50 @@
         </section>
     </div>
 
-    <img id="hero-img" src="" alt="Terminal Hero Banner">
-    
-    <nav id="nav-links"></nav>
-
-    <div id="gallery-container"></div>
-
     <script>
-        // 1. Data Object (Replaces Vue's data logic)
-        const siteData = {
-            heroImage: "https://picsum.photos/1600/400?grayscale", // Using a clean grayscale banner
-            pages: [
-                { label: "Page 1", href: "page1.html" },
-                { label: "Page 2", href: "page2.html" },
-                { label: "Page 3", href: "page3.html" }
-            ],
-            gallery: [], // Populated dynamically below
-            studentID: "",
-            hashCode: ""
-        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    heroImage: "https://source.unsplash.com/random/1600x400?military-terminal",
+                    pages: [
+                        { label: "Page 1", href: "page1.html" },
+                        { label: "Page 2", href: "page2.html" },
+                        { label: "Page 3", href: "page3.html" }
+                    ],
+                    gallery: [
+                        "https://source.unsplash.com/random/400x300?radar",
+                        "https://source.unsplash.com/random/400x300?control-room",
+                        "https://source.unsplash.com/random/400x300?green-screen"
+                    ],
+                    studentID: "",
+                    hashCode: ""
+                };
+            },
 
-        // 2. Helper function to get 3 unique random images
-        function fetchRandomImages() {
-            const urls = [];
-            for (let i = 0; i < 3; i++) {
-                // Generates a unique seed number so the browser doesn't cache the same image
-                const randomSeed = Math.floor(Math.random() * 5000) + i; 
-                urls.push(`https://picsum.photos/400/300?random=${randomSeed}`);
+            methods: {
+                async generateHash() {
+                    if (this.studentID.length != 4 || !/^\d{4}$/.test(this.studentID)) {
+                        alert("ENTER EXACTLY 4 DIGITS");
+                        return;
+                    }
+
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(this.studentID);
+                    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+                    this.hashCode = hashHex;
+
+                    fetch("assets/hash.txt?code=" + hashHex)
+                        .then(()=>{})
+                        .catch(()=>{});
+                }
             }
-            return urls;
-        }
+        });
 
-        // 3. Render Function (Replaces Vue's reactive rendering)
-        function initializeApp() {
-            // Assign the random images to our data object
-            siteData.gallery = fetchRandomImages();
-
-            // Set Hero Image
-            document.getElementById("hero-img").src = siteData.heroImage;
-
-            // Build Navigation Links dynamically
-            const navElement = document.getElementById("nav-links");
-            navElement.innerHTML = siteData.pages
-                .map((page, index) => {
-                    const link = `<a href="${page.href}">${page.label}</a>`;
-                    // Add a separator pipe between links, but not after the last one
-                    return index < siteData.pages.length - 1 ? `${link} | ` : link;
-                })
-                .join("");
-
-            // Build Gallery Images dynamically
-            const galleryElement = document.getElementById("gallery-container");
-            galleryElement.innerHTML = siteData.gallery
-                .map(imageUrl => `<img class="gallery-thumb" src="${imageUrl}" alt="Random Tech Gallery Image">`)
-                .join("");
-        }
-
-        // Initialize the app once the HTML elements are fully ready
-        document.addEventListener("DOMContentLoaded", initializeApp);
+        app.mount("#app");
     </script>
+
 </body>
 </html>
