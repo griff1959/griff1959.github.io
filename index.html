@@ -10,6 +10,17 @@
     </script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <style>
+        /* Ensures the canvas fits perfectly into the layout where the image used to be */
+        canvas.hero-canvas {
+            display: block;
+            width: 100%;
+            height: 200px;
+            background: #000500;
+            border-bottom: 2px solid #00ff55;
+            box-shadow: inset 0 0 20px rgba(0, 255, 85, 0.2);
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +32,7 @@
 
     <div id="app">
 
-        <img class="hero" :src="heroImage" alt="INTEL FEED">
+        <canvas id="starMap" class="hero-canvas" width="1600" height="200"></canvas>
 
         <section>
 
@@ -56,7 +67,7 @@
 
             <h2>EXTERNAL LINKS</h2>
             <ul>
-                <li><a href="https://faq.net" target="_blank">> FAQ.net</a></li>
+                <li><a href="https://faqs.org" target="_blank">> FAQs.org</a></li>
                 <li><a href="https://inia.org" target="_blank">> INIA Website</a></li>
             </ul>
 
@@ -69,17 +80,15 @@
     </div>
 
     <script>
+        // --- VUE APPLICATION SETUP ---
         const app = Vue.createApp({
-           data() {
+            data() {
                 return {
-                    // Updated to use picsum.photos
-                    heroImage: "https://picsum.photos/1600/200?random=1",
                     pages: [
                         { label: "Location", href: "page1.html" },
                         { label: "Local Airport Data", href: "page2.html" },
                         { label: "Generate UUID", href: "page3.html" }
                     ],
-                    // Appending unique IDs ensures you get 3 distinct images
                     gallery: [
                         "https://picsum.photos/400/300?random=2",
                         "https://picsum.photos/400/300?random=3",
@@ -89,7 +98,6 @@
                     hashCode: ""
                 };
             },
-
             methods: {
                 async generateHash() {
                     if (this.studentID.length != 4 || !/^\d{4}$/.test(this.studentID)) {
@@ -111,9 +119,74 @@
                 }
             }
         });
-
         app.mount("#app");
-    </script>
 
+        // --- TACTICAL STAR MAP CANVAS GENERATOR ---
+        function initStarMap() {
+            const canvas = document.getElementById('starMap');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Clear Background
+            ctx.fillStyle = "#000800";
+            ctx.fillRect(0, 0, w, h);
+
+            // 1. Draw Radian/Scope Circles (HUD Overlays)
+            ctx.strokeStyle = "rgba(0, 255, 85, 0.15)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(w / 2 + (i * 200 - 200), h / 2, 80, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            // 2. Generate Star Coordinate Array
+            const stars = [];
+            for (let i = 0; i < 120; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 2,
+                    alpha: Math.random() * 0.8 + 0.2
+                });
+            }
+
+            // Draw Stars
+            stars.forEach(star => {
+                ctx.fillStyle = `rgba(0, 255, 85, ${star.alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // 3. Form Random Constellation Vectors (Link close stars)
+            ctx.strokeStyle = "rgba(0, 255, 85, 0.25)";
+            for (let i = 0; i < stars.length; i++) {
+                let connections = 0;
+                for (let j = i + 1; j < stars.length && connections < 2; j++) {
+                    const dist = Math.hypot(stars[i].x - stars[j].x, stars[i].y - stars[j].y);
+                    if (dist < 65) {
+                        ctx.beginPath();
+                        ctx.moveTo(stars[i].x, stars[i].y);
+                        ctx.lineTo(stars[j].x, stars[j].y);
+                        ctx.stroke();
+                        connections++;
+                    }
+                }
+            }
+
+            // 4. Add Sweep Coordinates text overlays
+            ctx.fillStyle = "rgba(0, 255, 85, 0.4)";
+            ctx.font = "10px monospace";
+            ctx.fillText("SYS.LOC // DEEP SPACE RANGE FINDER", 20, 25);
+            ctx.fillText("MATRIX GAIN: +12.4dB", w - 160, 25);
+            ctx.fillText("GRID MODE: AZIMUTH SEC-09", 20, h - 15);
+        }
+
+        // Initialize the vector render once document assets attach
+        window.addEventListener('DOMContentLoaded', initStarMap);
+    </script>
 </body>
 </html>
