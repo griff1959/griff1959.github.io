@@ -70,18 +70,20 @@
 
     <script>
         const app = Vue.createApp({
-            data() {
+           data() {
                 return {
-                    heroImage: "https://source.unsplash.com/random/1600x400?military-terminal",
+                    // Updated to use picsum.photos
+                    heroImage: "https://picsum.photos/1600/400?random=1",
                     pages: [
                         { label: "Page 1", href: "page1.html" },
                         { label: "Page 2", href: "page2.html" },
                         { label: "Page 3", href: "page3.html" }
                     ],
+                    // Appending unique IDs ensures you get 3 distinct images
                     gallery: [
-                        "https://source.unsplash.com/random/400x300?radar",
-                        "https://source.unsplash.com/random/400x300?control-room",
-                        "https://source.unsplash.com/random/400x300?green-screen"
+                        "https://picsum.photos/400/300?random=2",
+                        "https://picsum.photos/400/300?random=3",
+                        "https://picsum.photos/400/300?random=4"
                     ],
                     studentID: "",
                     hashCode: ""
