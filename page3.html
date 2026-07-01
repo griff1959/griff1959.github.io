@@ -2,14 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PAGE 3</title>
+    <title>FILE: UUID GENERATOR</title>
     <link rel="stylesheet" href="assets/style.css">
+    <style>
+        /* Styling tailored to the terminal configuration */
+        .crypto-panel {
+            background: #001400;
+            border: 1px solid #00ff55;
+            color: #00ff55;
+            padding: 20px;
+            font-family: monospace;
+            margin: 20px 0;
+            max-width: 500px;
+        }
+        .uuid-display {
+            background: #000;
+            border: 1px dashed #00ff55;
+            padding: 10px;
+            font-size: 1.1rem;
+            word-break: break-all;
+            margin: 15px 0;
+            color: #ffffff;
+            text-align: center;
+        }
+        .terminal-btn {
+            background: #002200;
+            color: #00ff55;
+            border: 1px solid #00ff55;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        .terminal-btn:hover {
+            background: #00ff55;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
-    <header><h1>FILE: PAGE 3</h1></header>
+    <header>
+        <h1>FILE: CRYPTOGRAPHIC KEY GENERATOR</h1>
+    </header>
     <section>
-        <p>File retrieved successfully.</p>
+        <p>Cryptographic subsystem online.</p>
+        
+        <div class="crypto-panel">
+            <h3>[ SECURE UUIDv4 GENERATOR ]</h3>
+            <p>Target System Identifier token sequence:</p>
+            
+            <div class="uuid-display" id="uuid-out">GENERATING...</div>
+            
+            <button class="terminal-btn" onclick="createNewUUID()">
+                GENERATE NEW TOKEN
+            </button>
+        </div>
+
         <p><a href="index.html">> RETURN TO MAIN TERMINAL</a></p>
     </section>
+
+    <script>
+        function createNewUUID() {
+            try {
+                // Generates a cryptographically strong UUID version 4 natively
+                const newUuid = crypto.randomUUID();
+                document.getElementById('uuid-out').innerText = newUuid;
+            } catch (err) {
+                // Fallback method for older browser environments or non-secure contexts
+                document.getElementById('uuid-out').innerText = fallbackUUID();
+            }
+        }
+
+        function fallbackUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Generate an initial token immediately on terminal access
+        createNewUUID();
+    </script>
 </body>
 </html>
