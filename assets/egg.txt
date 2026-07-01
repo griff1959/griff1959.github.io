@@ -1,0 +1,4 @@
+MIL-COM EGG:
+Packet trace detected.
+Hidden node accessed.
+AUTH LEVEL: GREEN

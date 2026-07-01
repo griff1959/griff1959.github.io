@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MIL-COM TERMINAL</title>
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script>
+        fetch("assets/egg.txt").then(()=>{}).catch(()=>{});
+    </script>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>MIL-COM OPERATIONS TERMINAL</h1>
+        <div>AUTH LEVEL: <strong>GREEN</strong></div>
+        <div class="cursor"></div>
+    </header>
+
+    <div id="app">
+
+        <img class="hero" :src="heroImage" alt="INTEL FEED">
+
+        <section>
+
+            <div class="status-panel">
+                <h3>SYSTEM STATUS</h3>
+                <p>NODE LINK: ACTIVE</p>
+                <p>DATA FEED: STABLE</p>
+                <p>PACKET MONITOR: ENABLED</p>
+            </div>
+
+            <div class="status-panel">
+                <h3>AUTH VERIFICATION</h3>
+                <p>ENTER LAST 4 DIGITS OF STUDENT ID:</p>
+
+                <input type="text" v-model="studentID" maxlength="4"
+                       style="background:#000; color:#00ff55; border:1px solid #00ff55; padding:5px; width:80px;">
+
+                <button @click="generateHash"
+                        style="background:#001400; color:#00ff55; border:1px solid #00ff55; padding:5px; margin-left:10px;">
+                    GENERATE CODE
+                </button>
+
+                <p v-if="hashCode">AUTH CODE: <strong>{{ hashCode }}</strong></p>
+            </div>
+
+            <h2>INTERNAL FILES</h2>
+            <ul>
+                <li v-for="page in pages" :key="page.href">
+                    <a :href="page.href">> {{ page.label }}</a>
+                </li>
+            </ul>
+
+            <h2>EXTERNAL LINKS</h2>
+            <ul>
+                <li><a href="https://faq.org" target="_blank">> FAQ.org</a></li>
+                <li><a href="https://inia.org" target="_blank">> INIA Website</a></li>
+            </ul>
+
+            <h2>INTEL FEED</h2>
+            <div class="gallery">
+                <img v-for="img in gallery" :src="img" :key="img">
+            </div>
+
+        </section>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    heroImage: "https://source.unsplash.com/random/1600x400?military-terminal",
+                    pages: [
+                        { label: "Page 1", href: "page1.html" },
+                        { label: "Page 2", href: "page2.html" },
+                        { label: "Page 3", href: "page3.html" }
+                    ],
+                    gallery: [
+                        "https://source.unsplash.com/random/400x300?radar",
+                        "https://source.unsplash.com/random/400x300?control-room",
+                        "https://source.unsplash.com/random/400x300?green-screen"
+                    ],
+                    studentID: "",
+                    hashCode: ""
+                };
+            },
+
+            methods: {
+                async generateHash() {
+                    if (this.studentID.length != 4 || !/^\d{4}$/.test(this.studentID)) {
+                        alert("ENTER EXACTLY 4 DIGITS");
+                        return;
+                    }
+
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(this.studentID);
+                    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+                    this.hashCode = hashHex;
+
+                    fetch("assets/hash.txt?code=" + hashHex)
+                        .then(()=>{})
+                        .catch(()=>{});
+                }
+            }
+        });
+
+        app.mount("#app");
+    </script>
+
+</body>
+</html>
