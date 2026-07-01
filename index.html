@@ -48,6 +48,60 @@
     </style>
 </head>
 <body>
+ <header>
+        <h1>MIL-COM OPERATIONS TERMINAL</h1>
+        <div>AUTH LEVEL: <strong>GREEN</strong></div>
+        <div class="cursor"></div>
+    </header>
+
+    <div id="app">
+
+        <img class="hero" :src="heroImage" alt="INTEL FEED">
+
+        <section>
+
+            <div class="status-panel">
+                <h3>SYSTEM STATUS</h3>
+                <p>NODE LINK: ACTIVE</p>
+                <p>DATA FEED: STABLE</p>
+                <p>PACKET MONITOR: ENABLED</p>
+            </div>
+
+            <div class="status-panel">
+                <h3>AUTH VERIFICATION</h3>
+                <p>ENTER LAST 4 DIGITS OF STUDENT ID:</p>
+
+                <input type="text" v-model="studentID" maxlength="4"
+                       style="background:#000; color:#00ff55; border:1px solid #00ff55; padding:5px; width:80px;">
+
+                <button @click="generateHash"
+                        style="background:#001400; color:#00ff55; border:1px solid #00ff55; padding:5px; margin-left:10px;">
+                    GENERATE CODE
+                </button>
+
+                <p v-if="hashCode">AUTH CODE: <strong>{{ hashCode }}</strong></p>
+            </div>
+
+            <h2>INTERNAL FILES</h2>
+            <ul>
+                <li v-for="page in pages" :key="page.href">
+                    <a :href="page.href">> {{ page.label }}</a>
+                </li>
+            </ul>
+
+            <h2>EXTERNAL LINKS</h2>
+            <ul>
+                <li><a href="https://faq.org" target="_blank">> FAQ.org</a></li>
+                <li><a href="https://inia.org" target="_blank">> INIA Website</a></li>
+            </ul>
+
+            <h2>INTEL FEED</h2>
+            <div class="gallery">
+                <img v-for="img in gallery" :src="img" :key="img">
+            </div>
+
+        </section>
+    </div>
 
     <img id="hero-img" src="" alt="Terminal Hero Banner">
     
